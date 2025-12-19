@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>GTA RP Ledger | Elite</title>
+    <title>GTA RP | Ultimate Ledger</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -16,78 +16,47 @@
             --danger: #ff453a;
             --text-main: #ffffff;
             --text-secondary: #8e8e93;
-            --grad: linear-gradient(135deg, #ff9f0a 0%, #ff375f 100%);
         }
 
         body { 
             margin:0; font-family: -apple-system, system-ui, sans-serif;
-            background: var(--bg); color: var(--text-main); line-height: 1.4;
+            background: var(--bg); color: var(--text-main); 
         }
 
-        header { 
-            padding: 15px; background: var(--card-bg);
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .container { padding: 15px; padding-bottom: 40px; }
+        header { padding: 15px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; }
+        .container { padding: 15px; padding-bottom: 50px; }
 
         /* Статистика */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .stat-card {
-            background: var(--card-bg); padding: 15px; border-radius: 14px;
-            border-bottom: 3px solid transparent;
-        }
+        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 14px; border-bottom: 3px solid transparent; }
         .stat-card.red { border-bottom-color: var(--danger); }
         .stat-card.green { border-bottom-color: var(--success); }
-        .stat-card small { color: var(--text-secondary); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-card div { font-size: 18px; font-weight: 800; margin-top: 4px; }
 
-        /* Кнопка журнала */
-        .journal-btn {
-            background: #24242f; color: #fff; padding: 12px; border-radius: 12px;
-            text-align: center; margin-bottom: 20px; font-size: 14px; font-weight: 600;
-            cursor: pointer; border: 1px solid rgba(255,255,255,0.05);
-        }
+        /* График */
+        .chart-container { background: var(--card-bg); border-radius: 16px; padding: 15px; margin-top: 20px; }
 
-        /* Категории */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .cat-card {
-            background: var(--card-bg); border-radius: 16px; padding: 20px;
-            text-align: center; border: 1px solid rgba(255,255,255,0.03);
-            transition: 0.2s;
-        }
-        .cat-card:active { transform: scale(0.96); background: #1c1c26; }
-        .cat-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+        /* Меню */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .cat-card { background: var(--card-bg); border-radius: 16px; padding: 15px; text-align: center; cursor: pointer; }
+        .journal-btn { background: #24242f; color: #fff; padding: 12px; border-radius: 12px; text-align: center; margin: 15px 0; cursor: pointer; }
 
-        /* Бонусы в стиле Assistant */
-        .bonus-item {
-            background: var(--card-bg); border-radius: 14px; padding: 15px;
-            margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;
-        }
-        .bonus-info { display: flex; align-items: center; gap: 12px; }
-        .bonus-circle { 
-            width: 40px; height: 40px; border-radius: 50%; 
-            background: rgba(255,159,10,0.1); color: var(--accent);
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-        }
-
-        /* Инпуты */
-        input {
-            width: 100%; background: #000; border: 1px solid #2c2c2e;
-            color: #fff; padding: 12px; border-radius: 10px; margin-bottom: 8px; box-sizing: border-box;
-        }
-
-        .primary-btn {
-            background: var(--grad); color: #fff; border: none; padding: 15px;
-            border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer;
-        }
-
-        .deal-card {
+        /* Бонусы и Квесты */
+        .quest-item {
             background: var(--card-bg); padding: 12px; border-radius: 12px;
-            margin-bottom: 8px; border-left: 3px solid var(--accent);
+            margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;
         }
+        .quest-item.done { opacity: 0.5; border-left: 3px solid var(--success); }
+        
+        .checkbox-custom {
+            width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--accent);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .done .checkbox-custom { background: var(--accent); color: #000; }
 
+        input { width: 100%; background: #000; border: 1px solid #2c2c2e; color: #fff; padding: 12px; border-radius: 10px; margin-bottom: 8px; box-sizing: border-box; }
+        .primary-btn { background: linear-gradient(135deg, #ff9f0a 0%, #ff375f 100%); color: #fff; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 700; }
+        
         .hidden { display: none !important; }
         .profit { color: var(--success); }
         .loss { color: var(--danger); }
@@ -97,228 +66,154 @@
 <body>
 
 <header>
-    <div style="font-weight: 900; letter-spacing: -0.5px;">LEDGER <span style="color:var(--accent)">PRO</span></div>
+    <div style="font-weight: 900;">LEDGER <span style="color:var(--accent)">PRO</span></div>
     <button onclick="tg.openLink('https://donationalerts.com')" style="background:var(--accent); border:none; padding:6px 14px; border-radius:8px; font-weight:bold; font-size:11px;">ДОНАТ</button>
 </header>
 
 <div class="container">
     <div id="mainScreen">
         <div class="stats-grid">
-            <div class="stat-card red">
-                <small>Общий расход</small>
-                <div id="displayTotalBuy" class="loss">$ 0</div>
-            </div>
-            <div class="stat-card green">
-                <small>Чистая прибыль</small>
-                <div id="displayTotalProfit" class="profit">$ 0</div>
-            </div>
+            <div class="stat-card red"><small>РАСХОД</small><div id="totalBuy" class="loss">$ 0</div></div>
+            <div class="stat-card green"><small>ПРИБЫЛЬ</small><div id="totalProfit" class="profit">$ 0</div></div>
         </div>
 
-        <div class="journal-btn" onclick="showHistory()">📂 Открыть общий журнал сделок</div>
-
-        <div style="margin-bottom: 15px;">
-            <label style="font-size: 11px; color: var(--text-secondary); margin-left: 5px;">ФИЛЬТР ПО ДАТЕ</label>
-            <input type="date" id="dateFilter" onchange="updateUI()">
-        </div>
+        <div class="journal-btn" onclick="showHistory()">📂 История всех сделок</div>
+        <input type="date" id="dateFilter" onchange="updateUI()">
 
         <div class="menu-grid">
-            <div class="cat-card" onclick="openCategory('Предметы')"><span class="cat-icon">📦</span>Предметы</div>
-            <div class="cat-card" onclick="openCategory('Машины')"><span class="cat-icon">🏎️</span>Машины</div>
-            <div class="cat-card" onclick="openCategory('Аренда')"><span class="cat-icon">🔑</span>Аренда</div>
-            <div class="cat-card" onclick="openCategory('Одежда')"><span class="cat-icon">👕</span>Одежда</div>
+            <div class="cat-card" onclick="openCategory('Предметы')">📦<br>Предметы</div>
+            <div class="cat-card" onclick="openCategory('Машины')">🏎️<br>Машины</div>
+            <div class="cat-card" onclick="openCategory('Аренда')">🔑<br>Аренда</div>
+            <div class="cat-card" onclick="openCategory('Одежда')">👕<br>Одежда</div>
         </div>
 
-        <div class="cat-card" onclick="openBonus()" style="margin-top:10px; width:100%; box-sizing:border-box; border: 1px dashed var(--accent);">
-            <span style="color:var(--accent); font-weight:bold;">💎 БОНУСКОИНТЫ</span>
+        <button onclick="openBonus()" style="width:100%; margin-top:10px; padding:15px; border-radius:16px; background:var(--card-bg); color:var(--accent); border: 1px solid var(--accent); font-weight:bold;">💎 БОНУСЫ И ЗАДАНИЯ</button>
+
+        <div class="chart-container">
+            <small style="color:var(--text-secondary)">АНАЛИЗА ПРИБЫЛИ</small>
+            <canvas id="lineChart" style="margin-top:10px;"></canvas>
         </div>
     </div>
 
     <div id="viewList" class="hidden">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
-            <button onclick="goBack()" style="background:none; border:none; color:var(--accent); font-size:20px;">←</button>
-            <h2 id="viewTitle" style="margin:0; font-size:20px;">Сделки</h2>
-        </div>
-
-        <div id="formAdd" class="hidden" style="background:var(--card-bg); padding:15px; border-radius:16px; margin-bottom:20px;">
-            <input type="text" id="inName" placeholder="Название предмета">
+        <button onclick="goBack()" style="background:none; border:none; color:var(--accent); margin-bottom:15px;">← НАЗАД</button>
+        <h2 id="viewTitle">Сделки</h2>
+        <div id="formAdd" class="hidden" style="background:var(--card-bg); padding:15px; border-radius:16px; margin-bottom:15px;">
+            <input type="text" id="inName" placeholder="Название">
             <div style="display:flex; gap:8px;">
-                <input type="number" id="inBuy" placeholder="Цена покупки">
-                <input type="number" id="inSell" placeholder="Цена продажи">
+                <input type="number" id="inBuy" placeholder="Купил">
+                <input type="number" id="inSell" placeholder="Продал">
             </div>
-            <button class="primary-btn" onclick="saveDeal()">ДОБАВИТЬ ЗАПИСЬ</button>
+            <button class="primary-btn" onclick="saveDeal()">ДОБАВИТЬ</button>
         </div>
-
         <div id="itemsList"></div>
     </div>
 
     <div id="viewBonus" class="hidden">
-        <button onclick="goBack()" style="background:none; border:none; color:var(--accent); margin-bottom:15px; font-weight:bold;">← НАЗАД</button>
-        <h2 style="margin:0 0 20px 0;">Учет Бонусов</h2>
-        
-        <div id="bonusList"></div>
-        
-        <div style="background:var(--card-bg); padding:15px; border-radius:16px; margin-top:20px;">
-            <input type="text" id="bnName" placeholder="Название (напр. BC)">
-            <input type="number" id="bnVal" placeholder="Количество">
-            <button class="primary-btn" onclick="addBonus()">+ ДОБАВИТЬ ПАРАМЕТР</button>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button onclick="goBack()" style="background:none; border:none; color:var(--accent); font-weight:bold;">← НАЗАД</button>
+            <button onclick="resetQuests()" style="background:var(--danger); border:none; color:white; padding:5px 10px; border-radius:8px; font-size:10px;">СБРОСИТЬ ПРОГРЕСС</button>
         </div>
+        <h2 style="margin:15px 0;">Ежедневные квесты</h2>
+        <div id="questList"></div>
     </div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
-tg.expand();
+const storageKey = 'gta_ledger_v4_' + (tg.initDataUnsafe.user?.id || 'dev');
 
-const storageKey = 'gta_ledger_' + (tg.initDataUnsafe.user?.id || 'dev');
-let data = JSON.parse(localStorage.getItem(storageKey)) || { deals: [], bonuses: [] };
-let activeCat = '';
+let state = JSON.parse(localStorage.getItem(storageKey)) || {
+    deals: [],
+    quests: [
+        "3 часа онлайн", "Лотерея", "Тир", "Киностудия", "Кинотеатр", "Сайт", "Brawl", "Лайк в Match", 
+        "Открыть кейс", "Кинуть мячик", "Дрессировка", "Ставка в колесе", "Метро", "Рыбалка", 
+        "Задания клуба", "Автосервис", "Баскетбол", "Футбол", "Армрестлинг", "Дартс", "Волейбол", 
+        "Пинг-понг", "Большой теннис", "Сыграть в мафию", "Платеж по лизингу", "Гонка", "Арена", 
+        "Стройка", "Порт", "Шахта", "Ферма", "Картинг", "Сокровище", "Автобус", "Почта", "Нули в казино", 
+        "Денс батл", "Тренажерный зал", "Тренер. комплекс", "Охота", "Пожарный", "Дальнобойщик", 
+        "Заказ материалов", "Смена внешности", "Граффити", "Контрабанда", "Трава в теплице", 
+        "Обезбол в лаборатории", "Бизвар", "Капт", "Хаммер с ВЗХ", "Медкарты в EMS", "Вызовы в EMS", 
+        "Зелёная строка WN", "Объявления WN", "Ограбления домов", "Коды", "Регистрация авто", 
+        "Арест", "Выкуп с КПЗ", "Аирдроп"
+    ].map(q => ({name: q, done: false}))
+};
 
+let chart = null;
+
+function save() { localStorage.setItem(storageKey, JSON.stringify(state)); updateUI(); }
 function fmt(v) { return '$ ' + Math.abs(v).toLocaleString(); }
 
-function save() { 
-    localStorage.setItem(storageKey, JSON.stringify(data)); 
-    updateUI();
-}
-
 // Навигация
-function openCategory(cat) {
-    activeCat = cat;
-    document.getElementById('mainScreen').classList.add('hidden');
-    document.getElementById('viewList').classList.remove('hidden');
-    document.getElementById('formAdd').classList.remove('hidden');
-    document.getElementById('viewTitle').textContent = cat;
-    renderDeals('cat');
+function openCategory(c) { activeCat = c; toggleView('viewList'); document.getElementById('formAdd').classList.remove('hidden'); renderDeals('cat'); }
+function showHistory() { activeCat = ''; toggleView('viewList'); document.getElementById('formAdd').classList.add('hidden'); renderDeals('all'); }
+function openBonus() { toggleView('viewBonus'); renderQuests(); }
+function goBack() { toggleView('mainScreen'); }
+function toggleView(id) { 
+    document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden')); 
+    document.getElementById(id).classList.remove('hidden'); 
 }
 
-function showHistory() {
-    activeCat = '';
-    document.getElementById('mainScreen').classList.add('hidden');
-    document.getElementById('viewList').classList.remove('hidden');
-    document.getElementById('formAdd').classList.add('hidden');
-    document.getElementById('viewTitle').textContent = 'История всех сделок';
-    renderDeals('all');
-}
-
-function openBonus() {
-    document.getElementById('mainScreen').classList.add('hidden');
-    document.getElementById('viewBonus').classList.remove('hidden');
-    renderBonuses();
-}
-
-function goBack() {
-    document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-    document.getElementById('mainScreen').classList.remove('hidden');
-}
-
-// Логика сделок
+// Сделки
 function saveDeal() {
-    const name = document.getElementById('inName').value;
-    const b = Number(document.getElementById('inBuy').value) || 0;
-    const s = Number(document.getElementById('inSell').value) || 0;
-    if(!name) return;
-
-    data.deals.push({
-        id: Date.now(),
-        cat: activeCat,
-        name: name,
-        buy: b,
-        sell: s,
-        date: new Date().toISOString().split('T')[0]
-    });
-    
-    document.getElementById('inName').value = '';
-    document.getElementById('inBuy').value = '';
-    document.getElementById('inSell').value = '';
-    save();
-    renderDeals('cat');
+    const n = document.getElementById('inName').value, b = Number(document.getElementById('inBuy').value)||0, s = Number(document.getElementById('inSell').value)||0;
+    if(!n) return;
+    state.deals.push({id: Date.now(), cat: activeCat, name: n, buy: b, sell: s, date: new Date().toISOString().split('T')[0]});
+    document.getElementById('inName').value = ''; document.getElementById('inBuy').value = ''; document.getElementById('inSell').value = '';
+    save(); renderDeals('cat');
 }
 
 function renderDeals(mode) {
-    const cont = document.getElementById('itemsList');
-    cont.innerHTML = '';
-    const list = mode === 'all' ? data.deals : data.deals.filter(d => d.cat === activeCat);
-    
+    const cont = document.getElementById('itemsList'); cont.innerHTML = '';
+    const list = mode === 'all' ? state.deals : state.deals.filter(d => d.cat === activeCat);
     list.sort((a,b) => b.id - a.id).forEach(d => {
-        const prof = d.sell - d.buy;
-        cont.innerHTML += `
-            <div class="deal-card">
-                <div style="display:flex; justify-content:space-between; align-items:start;">
-                    <div>
-                        <small style="color:var(--text-secondary)">${d.date} • ${d.cat}</small><br>
-                        <b>${d.name}</b>
-                    </div>
-                    <div style="text-align:right">
-                        <div class="${prof>=0?'profit':'loss'}">${prof>=0?'+':''}${fmt(prof)}</div>
-                        <small style="color:var(--danger)" onclick="deleteDeal(${d.id})">Удалить</small>
-                    </div>
-                </div>
-                <div style="font-size:11px; margin-top:5px; color:var(--text-secondary)">
-                    Закуп: ${fmt(d.buy)} | Продажа: ${fmt(d.sell)}
-                </div>
-            </div>
-        `;
+        const p = d.sell - d.buy;
+        cont.innerHTML += `<div class="quest-item"><div><small>${d.cat}</small><br><b>${d.name}</b></div><div style="text-align:right"><div class="${p>=0?'profit':'loss'}">${fmt(p)}</div><small onclick="deleteDeal(${d.id})" style="color:var(--danger)">Удалить</small></div></div>`;
     });
 }
+function deleteDeal(id) { state.deals = state.deals.filter(d => d.id !== id); save(); renderDeals(activeCat?'cat':'all'); }
 
-function deleteDeal(id) {
-    data.deals = data.deals.filter(d => d.id !== id);
-    save();
-    renderDeals(activeCat ? 'cat' : 'all');
-}
-
-// Логика бонусов
-function addBonus() {
-    const name = document.getElementById('bnName').value;
-    const val = Number(document.getElementById('bnVal').value) || 0;
-    if(!name) return;
-    data.bonuses.push({name, val});
-    save();
-    renderBonuses();
-    document.getElementById('bnName').value = '';
-    document.getElementById('bnVal').value = '';
-}
-
-function renderBonuses() {
-    const cont = document.getElementById('bonusList');
-    cont.innerHTML = '';
-    data.bonuses.forEach((b, i) => {
-        cont.innerHTML += `
-            <div class="bonus-item">
-                <div class="bonus-info">
-                    <div class="bonus-circle">${b.name[0].toUpperCase()}</div>
-                    <div>
-                        <div style="font-weight:bold;">${b.name}</div>
-                        <div style="font-size:12px; color:var(--text-secondary)">Накоплено</div>
-                    </div>
-                </div>
-                <div style="text-align:right">
-                    <div style="color:var(--accent); font-weight:800;">${b.val.toLocaleString()}</div>
-                    <small style="color:var(--danger)" onclick="data.bonuses.splice(${i},1); save(); renderBonuses();">✕</small>
-                </div>
-            </div>
-        `;
+// Квесты
+function renderQuests() {
+    const cont = document.getElementById('questList'); cont.innerHTML = '';
+    state.quests.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.className = 'quest-item ' + (q.done ? 'done' : '');
+        div.innerHTML = `<span>${q.name}</span><div class="checkbox-custom" onclick="toggleQuest(${i})">${q.done ? '✓' : ''}</div>`;
+        cont.appendChild(div);
     });
 }
+function toggleQuest(i) { state.quests[i].done = !state.quests[i].done; save(); renderQuests(); }
+function resetQuests() { if(confirm('Сбросить все задания?')) { state.quests.forEach(q => q.done = false); save(); renderQuests(); } }
 
-// Главная статистика
+// UI и График
 function updateUI() {
     const filter = document.getElementById('dateFilter').value;
-    const filtered = filter ? data.deals.filter(d => d.date === filter) : data.deals;
-    
-    // ПРАВИЛЬНЫЙ РАСЧЕТ:
-    // Расход = Сумма всех покупок
-    // Прибыль = Сумма (Продажа - Покупка)
-    const totalExp = filtered.reduce((acc, d) => acc + d.buy, 0);
-    const totalProf = filtered.reduce((acc, d) => acc + (d.sell - d.buy), 0);
-    
-    document.getElementById('displayTotalBuy').textContent = fmt(totalExp);
-    document.getElementById('displayTotalProfit').textContent = (totalProf>=0?'+':'') + fmt(totalProf);
+    const filtered = filter ? state.deals.filter(d => d.date === filter) : state.deals;
+    const buy = filtered.reduce((a, b) => a + b.buy, 0), prof = filtered.reduce((a, b) => a + (b.sell - b.buy), 0);
+    document.getElementById('totalBuy').textContent = fmt(buy);
+    document.getElementById('totalProfit').textContent = (prof>=0?'+':'') + fmt(prof);
+    renderChart();
 }
 
-// Инициализация
+function renderChart() {
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    const cats = ['Предметы', 'Машины', 'Аренда', 'Одежда'];
+    const data = cats.map(c => state.deals.filter(d => d.cat === c).reduce((a, b) => a + (b.sell - b.buy), 0));
+    
+    if(chart) chart.destroy();
+    chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: cats,
+            datasets: [{ label: 'Чистая прибыль', data: data, backgroundColor: ['#ff9f0a', '#30d158', '#ff453a', '#5856d6'], borderRadius: 8 }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#222' }, ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } } }
+    });
+}
+
 document.getElementById('dateFilter').value = new Date().toISOString().split('T')[0];
 updateUI();
 </script>
-
 </body>
 </html>
