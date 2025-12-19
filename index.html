@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>GTA RP | BOOMBAHA Ledger</title>
+    <title>GTA RP | BOOMBAHA Ledger v7</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -35,37 +35,27 @@
         .header-btn {
             border: none; padding: 7px 12px; border-radius: 8px;
             font-weight: bold; font-size: 11px; cursor: pointer;
-            text-decoration: none; display: inline-flex; align-items: center;
+            display: inline-flex; align-items: center;
         }
 
         .container { padding: 15px; padding-bottom: 50px; }
 
-        /* Карточки статистики */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .stat-card small { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card { background: var(--card-bg); padding: 15px; border-radius: 14px; }
+        .stat-card small { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; }
         .stat-card div { font-size: 18px; font-weight: 800; margin-top: 5px; }
 
-        /* Кнопки меню */
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .cat-card { 
-            background: var(--card-bg); border-radius: 16px; padding: 20px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.02);
-            transition: 0.2s;
-        }
-        .cat-card:active { transform: scale(0.95); background: #1c1c26; }
+        .cat-card { background: var(--card-bg); border-radius: 16px; padding: 20px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.02); }
+        
         .journal-btn { background: #24242f; color: #fff; padding: 15px; border-radius: 14px; text-align: center; margin: 15px 0; font-weight: 600; cursor: pointer; }
 
-        /* Список сделок */
         .deal-item { 
             background: var(--card-bg); padding: 14px; border-radius: 12px; 
             margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
             border-left: 4px solid var(--accent);
         }
-        .deal-item .info b { font-size: 15px; }
-        .deal-item .info small { color: var(--text-secondary); display: block; font-size: 11px; }
 
-        /* Квесты */
         .quest-row {
             background: var(--card-bg); padding: 12px 15px; border-radius: 12px;
             margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;
@@ -74,9 +64,8 @@
         .check-box { width: 22px; height: 22px; border: 2px solid var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         .done .check-box { background: var(--accent); color: #000; }
 
-        /* Формы */
         input { width: 100%; background: #000; border: 1px solid #2c2c2e; color: #fff; padding: 12px; border-radius: 10px; margin-bottom: 8px; box-sizing: border-box; }
-        .save-btn { background: linear-gradient(135deg, #ff9f0a 0%, #ff375f 100%); color: #fff; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 800; margin-top: 5px; cursor: pointer; }
+        .save-btn { background: linear-gradient(135deg, #ff9f0a 0%, #ff375f 100%); color: #fff; border: none; padding: 16px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; }
 
         .hidden { display: none !important; }
         .profit { color: var(--success); }
@@ -86,33 +75,24 @@
 
 <body>
 
-<header>
-    <div style="font-weight: 900; letter-spacing: -0.5px;">LEDGER <span style="color:var(--accent)">PRO</span></div>
+<header id="appHeader">
+    <div style="font-weight: 900;">LEDGER <span style="color:var(--accent)">PRO</span></div>
     <div style="display: flex; gap: 8px;">
         <button onclick="tg.openLink('https://www.youtube.com/@BOOMBAHA')" class="header-btn" style="background: var(--youtube); color: white;">▶ YouTube</button>
-        <button onclick="tg.openLink('https://donationalerts.com')" class="header-btn" style="background: var(--accent); color: #000;">💰 Донат</button>
+        <button onclick="tg.openLink('https://donatello.to/BOOMBAHA')" class="header-btn" style="background: var(--accent); color: #000;">💰 Донат</button>
     </div>
 </header>
 
 <div class="container">
-    <div id="home">
+    <div id="screenHome">
         <div class="stats-grid">
-            <div class="stat-card">
-                <small>Все расходы</small>
-                <div id="sumBuy" class="loss">$ 0</div>
-            </div>
-            <div class="stat-card">
-                <small>Все доходы</small>
-                <div id="sumSell" class="profit">$ 0</div>
-            </div>
+            <div class="stat-card"><small>Все расходы</small><div id="sumBuy" class="loss">$ 0</div></div>
+            <div class="stat-card"><small>Все доходы</small><div id="sumSell" class="profit">$ 0</div></div>
         </div>
 
-        <div class="journal-btn" onclick="nav('history')">📂 Открыть историю всех сделок</div>
+        <div class="journal-btn" onclick="openHistory()">📂 Открыть историю всех сделок</div>
         
-        <div style="margin-bottom: 20px;">
-            <small style="color:var(--text-secondary); margin-left: 5px;">ФИЛЬТР ПО ДАТЕ</small>
-            <input type="date" id="mainDate" onchange="refresh()">
-        </div>
+        <input type="date" id="mainDate" onchange="refreshData()">
 
         <div class="menu-grid">
             <div class="cat-card" onclick="openCat('Предметы')">📦<br><small>Предметы</small></div>
@@ -121,166 +101,154 @@
             <div class="cat-card" onclick="openCat('Одежда')">👕<br><small>Одежда</small></div>
         </div>
 
-        <button onclick="nav('quests')" style="width:100%; margin-top:15px; padding:18px; border-radius:18px; background:var(--card-bg); color:var(--accent); border: 1px solid var(--accent); font-weight:bold; font-size: 14px;">
-            💎 ЕЖЕДНЕВНЫЕ КВЕСТЫ (60+)
-        </button>
+        <button onclick="openQuests()" style="width:100%; margin-top:15px; padding:18px; border-radius:18px; background:var(--card-bg); color:var(--accent); border: 1px solid var(--accent); font-weight:bold;">💎 ЕЖЕДНЕВНЫЕ КВЕСТЫ</button>
 
         <div style="background: var(--card-bg); border-radius: 20px; padding: 15px; margin-top: 20px;">
-            <canvas id="mainChart" style="max-height: 250px;"></canvas>
+            <canvas id="mainChart"></canvas>
         </div>
     </div>
 
-    <div id="listPage" class="hidden">
-        <button onclick="nav('home')" style="background:none; border:none; color:var(--accent); margin-bottom:15px; font-weight:bold; font-size:16px;">← НАЗАД</button>
+    <div id="screenList" class="hidden">
+        <button onclick="showScreen('screenHome')" style="background:none; border:none; color:var(--accent); margin-bottom:15px; font-weight:bold; font-size:16px;">← НАЗАД</button>
         <h2 id="pageTitle" style="margin: 0 0 15px 0;">Сделки</h2>
         
-        <div id="addSection" class="hidden" style="background:var(--card-bg); padding:18px; border-radius:18px; margin-bottom:20px;">
-            <input type="text" id="fName" placeholder="Название (BMW, Маска и т.д.)">
+        <div id="addFormBox" class="hidden" style="background:var(--card-bg); padding:18px; border-radius:18px; margin-bottom:20px;">
+            <input type="text" id="fName" placeholder="Название">
             <div style="display:flex; gap:10px;">
-                <input type="number" id="fBuy" placeholder="Потратил $">
-                <input type="number" id="fSell" placeholder="Получил $">
+                <input type="number" id="fBuy" placeholder="Расход $">
+                <input type="number" id="fSell" placeholder="Доход $">
             </div>
-            <button class="save-btn" onclick="doAdd()">СОХРАНИТЬ В ЖУРНАЛ</button>
+            <button class="save-btn" onclick="addDeal()">СОХРАНИТЬ</button>
         </div>
 
         <div id="itemsContainer"></div>
     </div>
 
-    <div id="questPage" class="hidden">
+    <div id="screenQuests" class="hidden">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-            <button onclick="nav('home')" style="background:none; border:none; color:var(--accent); font-weight:bold;">← НАЗАД</button>
-            <button onclick="doReset()" style="background:var(--danger); border:none; color:white; padding:7px 15px; border-radius:10px; font-size:11px; font-weight:bold;">СБРОСИТЬ ДЕНЬ</button>
+            <button onclick="showScreen('screenHome')" style="background:none; border:none; color:var(--accent); font-weight:bold;">← НАЗАД</button>
+            <button onclick="resetQuests()" style="background:var(--danger); border:none; color:white; padding:7px 15px; border-radius:10px; font-size:11px;">СБРОСИТЬ ДЕНЬ</button>
         </div>
-        <div id="qContainer"></div>
+        <div id="questContainer"></div>
     </div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
-const key = 'gta_boom_v6';
-let app = JSON.parse(localStorage.getItem(key)) || {
+const DB_KEY = 'gta_boom_v7_final';
+let state = JSON.parse(localStorage.getItem(DB_KEY)) || {
     deals: [],
     quests: ["3 часа онлайн", "Лотерея", "Тир", "Киностудия", "Кинотеатр", "Сайт", "Brawl", "Лайк в Match", "Открыть кейс", "Кинуть мячик", "Дрессировка", "Ставка в колесе", "Метро", "Рыбалка", "Задания клуба", "Автосервис", "Баскетбол", "Футбол", "Армрестлинг", "Дартс", "Волейбол", "Пинг-понг", "Большой теннис", "Сыграть в мафию", "Платеж по лизингу", "Гонка", "Арена", "Стройка", "Порт", "Шахта", "Ферма", "Картинг", "Сокровище", "Автобус", "Почта", "Нули в казино", "Денс батл", "Тренажерный зал", "Тренер. комплекс", "Охота", "Пожарный", "Дальнобойщик", "Заказ материалов", "Смена внешности", "Граффити", "Контрабанда", "Трава в теплице", "Обезбол в лаборатории", "Бизвар", "Капт", "Хаммер с ВЗХ", "Медкарты в EMS", "Вызовы в EMS", "Зелёная строка WN", "Объявления WN", "Ограбления домов", "Коды", "Регистрация авто", "Арест", "Выкуп с КПЗ", "Аирдроп"].map(n => ({n, d: false}))
 };
 
-let chart = null;
-let curCat = '';
+let myChart = null;
+let currentCategory = '';
 
-function save() { localStorage.setItem(key, JSON.stringify(app)); refresh(); }
+function saveAll() { localStorage.setItem(DB_KEY, JSON.stringify(state)); refreshData(); }
 function fmt(n) { return '$ ' + Math.abs(n).toLocaleString(); }
 
-function nav(id) {
-    document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+function showScreen(id) {
+    document.getElementById('screenHome').classList.add('hidden');
+    document.getElementById('screenList').classList.add('hidden');
+    document.getElementById('screenQuests').classList.add('hidden');
     document.getElementById(id).classList.remove('hidden');
+    window.scrollTo(0,0);
 }
 
-function openCat(c) {
-    curCat = c;
-    nav('listPage');
-    document.getElementById('pageTitle').innerText = c;
-    document.getElementById('addSection').classList.remove('hidden');
-    renderList('cat');
+function openCat(cat) {
+    currentCategory = cat;
+    document.getElementById('pageTitle').innerText = cat;
+    document.getElementById('addFormBox').classList.remove('hidden');
+    showScreen('screenList');
+    renderItems('cat');
 }
 
 function openHistory() {
-    curCat = '';
-    nav('listPage');
-    document.getElementById('pageTitle').innerText = 'История всех сделок';
-    document.getElementById('addSection').classList.add('hidden');
-    renderList('all');
+    currentCategory = '';
+    document.getElementById('pageTitle').innerText = 'Все сделки';
+    document.getElementById('addFormBox').classList.add('hidden');
+    showScreen('screenList');
+    renderItems('all');
 }
 
-function doAdd() {
-    const name = document.getElementById('fName').value;
+function openQuests() {
+    showScreen('screenQuests');
+    renderQuests();
+}
+
+function addDeal() {
+    const n = document.getElementById('fName').value;
     const b = Number(document.getElementById('fBuy').value) || 0;
     const s = Number(document.getElementById('fSell').value) || 0;
-    if(!name) return;
-    app.deals.push({id: Date.now(), c: curCat, n: name, b, s, d: new Date().toISOString().split('T')[0]});
+    if(!n) return;
+    state.deals.push({id: Date.now(), c: currentCategory, n, b, s, d: new Date().toISOString().split('T')[0]});
     document.getElementById('fName').value = ''; 
     document.getElementById('fBuy').value = ''; 
     document.getElementById('fSell').value = '';
-    save(); renderList('cat');
+    saveAll(); renderItems('cat');
 }
 
-function renderList(mode) {
+function renderItems(mode) {
     const cont = document.getElementById('itemsContainer');
     cont.innerHTML = '';
-    const list = mode === 'all' ? app.deals : app.deals.filter(x => x.c === curCat);
+    const list = mode === 'all' ? state.deals : state.deals.filter(x => x.c === currentCategory);
     list.sort((a,b) => b.id - a.id).forEach(x => {
         cont.innerHTML += `
             <div class="deal-item">
-                <div class="info">
-                    <small>${x.d} • ${x.c}</small>
-                    <b>${x.n}</b>
-                </div>
+                <div><small>${x.d} • ${x.c}</small><br><b>${x.n}</b></div>
                 <div style="text-align:right">
                     <div class="loss">-${fmt(x.b)}</div>
                     <div class="profit">+${fmt(x.s)}</div>
-                    <small style="color:var(--danger); cursor:pointer" onclick="del(${x.id})">Удалить</small>
+                    <small style="color:var(--danger)" onclick="deleteItem(${x.id}, '${mode}')">Удалить</small>
                 </div>
             </div>`;
     });
 }
 
-function del(id) { 
-    if(confirm('Удалить запись?')) { 
-        app.deals = app.deals.filter(x => x.id !== id); 
-        save(); 
-        renderList(curCat ? 'cat' : 'all'); 
-    } 
+function deleteItem(id, mode) {
+    state.deals = state.deals.filter(x => x.id !== id);
+    saveAll(); renderItems(mode);
 }
 
 function renderQuests() {
-    const cont = document.getElementById('qContainer');
+    const cont = document.getElementById('questContainer');
     cont.innerHTML = '';
-    app.quests.forEach((q, i) => {
+    state.quests.forEach((q, i) => {
         const div = document.createElement('div');
         div.className = 'quest-row ' + (q.d ? 'done' : '');
-        div.onclick = () => { app.quests[i].d = !app.quests[i].d; save(); renderQuests(); };
+        div.onclick = () => { state.quests[i].d = !state.quests[i].d; saveAll(); renderQuests(); };
         div.innerHTML = `<span>${q.n}</span><div class="check-box">${q.d ? '✓' : ''}</div>`;
         cont.appendChild(div);
     });
 }
 
-function doReset() { if(confirm('Сбросить весь прогресс за день?')) { app.quests.forEach(q => q.d = false); save(); renderQuests(); } }
+function resetQuests() { if(confirm('Сбросить день?')) { state.quests.forEach(q => q.d = false); saveAll(); renderQuests(); } }
 
-function refresh() {
+function refreshData() {
     const filter = document.getElementById('mainDate').value;
-    const filtered = filter ? app.deals.filter(x => x.d === filter) : app.deals;
-    
-    // ПРОСТАЯ МАТЕМАТИКА: Считаем всё
-    const totalBuy = filtered.reduce((acc, x) => acc + x.b, 0);
-    const totalSell = filtered.reduce((acc, x) => acc + x.s, 0);
-    
-    document.getElementById('sumBuy').textContent = fmt(totalBuy);
-    document.getElementById('sumSell').textContent = fmt(totalSell);
-    
+    const filtered = filter ? state.deals.filter(x => x.d === filter) : state.deals;
+    const totalB = filtered.reduce((a, b) => a + b.b, 0);
+    const totalS = filtered.reduce((a, b) => a + b.s, 0);
+    document.getElementById('sumBuy').textContent = fmt(totalB);
+    document.getElementById('sumSell').textContent = fmt(totalS);
     updateChart();
 }
 
 function updateChart() {
     const ctx = document.getElementById('mainChart').getContext('2d');
     const cats = ['Предметы', 'Машины', 'Аренда', 'Одежда'];
-    const data = cats.map(c => app.deals.filter(x => x.c === c).reduce((acc, x) => acc + (x.s - x.b), 0));
-    
-    if(chart) chart.destroy();
-    chart = new Chart(ctx, {
+    const data = cats.map(c => state.deals.filter(x => x.c === c).reduce((a, b) => a + (b.s - b.b), 0));
+    if(myChart) myChart.destroy();
+    myChart = new Chart(ctx, {
         type: 'bar',
-        data: {
-            labels: cats,
-            datasets: [{ label: 'Чистая прибыль по категориям', data: data, backgroundColor: ['#ff9f0a', '#30d158', '#ff453a', '#5856d6'], borderRadius: 8 }]
-        },
-        options: { 
-            plugins: { legend: { display: false } },
-            scales: { y: { grid: { color: '#222' }, ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } }
-        }
+        data: { labels: cats, datasets: [{ data: data, backgroundColor: ['#ff9f0a', '#30d158', '#ff453a', '#5856d6'], borderRadius: 6 }] },
+        options: { plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#222' }, ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } } }
     });
 }
 
-// Запуск
 document.getElementById('mainDate').value = new Date().toISOString().split('T')[0];
-refresh();
-if(!document.getElementById('questPage').classList.contains('hidden')) renderQuests();
+refreshData();
+tg.expand();
 </script>
 
 </body>
