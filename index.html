@@ -6,56 +6,14 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
-    body {
-      margin: 0;
-      background: #0e0e0e;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-
-    header {
-      padding: 15px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      border-bottom: 2px solid orange;
-    }
-
-    .box {
-      margin: 15px;
-      padding: 15px;
-      background: #1a1a1a;
-      border-radius: 10px;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      background: #000;
-      color: #fff;
-      border: 1px solid #333;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      background: orange;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .profit {
-      margin-top: 10px;
-      font-size: 18px;
-      font-weight: bold;
-    }
+    body { margin:0; font-family:Arial; background:#0e0e0e; color:#fff; }
+    header { padding:15px; text-align:center; font-size:20px; font-weight:bold; border-bottom:2px solid orange; }
+    .box { margin:15px; padding:15px; background:#1a1a1a; border-radius:10px; }
+    input, select { width:100%; padding:10px; margin-top:8px; background:#000; color:#fff; border:1px solid #333; border-radius:6px; font-size:16px; }
+    button { width:100%; padding:12px; margin-top:12px; background:orange; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { border:1px solid #333; padding:6px; text-align:center; }
+    th { background:#222; }
   </style>
 </head>
 
@@ -66,55 +24,87 @@
 <div class="box">
   <h3>Новая сделка</h3>
 
-  <label>Закупка ($)</label>
-  <input type="number" id="buy" placeholder="Введите сумму">
+  <label>Категория</label>
+  <select id="category">
+    <option>Предметы</option>
+    <option>Аренда</option>
+    <option>Машины</option>
+    <option>Шмотки</option>
+  </select>
+
+  <label>Название товара</label>
+  <input type="text" id="itemName" placeholder="Введите название">
+
+  <label>Покупка ($)</label>
+  <input type="number" id="buy" placeholder="Сумма покупки">
 
   <label>Продажа ($)</label>
-  <input type="number" id="sell" placeholder="Введите сумму">
-
-  <div class="profit" id="profit">Прибыль: $0</div>
+  <input type="number" id="sell" placeholder="Сумма продажи">
 
   <button onclick="addDeal()">Добавить сделку</button>
 </div>
 
 <div class="box">
-  <h3>Категории</h3>
-  <button>Предметы</button>
-  <button>Аренда</button>
-  <button>Машины</button>
-  <button>Шмотки</button>
-</div>
-
-<div class="box">
-  <h3>БонусКоинты</h3>
-  <p>1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 / 9</p>
+  <h3>Список сделок</h3>
+  <table id="dealsTable">
+    <thead>
+      <tr>
+        <th>Категория</th>
+        <th>Товар</th>
+        <th>Покупка</th>
+        <th>Продажа</th>
+        <th>Прибыль</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
 <script>
-  const tg = window.Telegram.WebApp;
-  tg.ready();
-  tg.expand();
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
-  const buyInput = document.getElementById('buy');
-  const sellInput = document.getElementById('sell');
-  const profitText = document.getElementById('profit');
+let deals = JSON.parse(localStorage.getItem('deals')) || [];
 
-  function calculateProfit() {
-    const buy = Number(buyInput.value) || 0;
-    const sell = Number(sellInput.value) || 0;
-    const profit = sell - buy;
-    profitText.textContent = 'Прибыль: $' + profit;
+function renderTable() {
+  const tbody = document.querySelector('#dealsTable tbody');
+  tbody.innerHTML = '';
+  deals.forEach(deal => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${deal.category}</td>
+      <td>${deal.name}</td>
+      <td>${deal.buy}</td>
+      <td>${deal.sell}</td>
+      <td>${deal.sell - deal.buy}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function addDeal() {
+  const category = document.getElementById('category').value;
+  const name = document.getElementById('itemName').value;
+  const buy = Number(document.getElementById('buy').value) || 0;
+  const sell = Number(document.getElementById('sell').value) || 0;
+
+  if(!name) {
+    alert('Введите название товара!');
+    return;
   }
 
-  buyInput.addEventListener('input', calculateProfit);
-  sellInput.addEventListener('input', calculateProfit);
+  deals.push({category, name, buy, sell});
+  localStorage.setItem('deals', JSON.stringify(deals));
 
-  function addDeal() {
-    alert('Сделка добавлена! (следующий шаг — сохранение)');
-    buyInput.value = '';
-    sellInput.value = '';
-    calculateProfit();
-  }
+  document.getElementById('itemName').value = '';
+  document.getElementById('buy').value = '';
+  document.getElementById('sell').value = '';
+
+  renderTable();
+}
+
+renderTable();
 </script>
 
 </body>
