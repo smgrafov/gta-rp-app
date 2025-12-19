@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>GTA RP | Ultimate Ledger</title>
+    <title>GTA RP | Ultimate Ledger & Tracker</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -14,6 +14,7 @@
             --accent: #ff9f0a;
             --success: #30d158;
             --danger: #ff453a;
+            --youtube: #ff0000;
             --text-main: #ffffff;
             --text-secondary: #8e8e93;
         }
@@ -21,42 +22,58 @@
         body { 
             margin:0; font-family: -apple-system, system-ui, sans-serif;
             background: var(--bg); color: var(--text-main); 
+            user-select: none;
         }
 
-        header { padding: 15px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; }
-        .container { padding: 15px; padding-bottom: 50px; }
+        header { 
+            padding: 15px; background: var(--card-bg); 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky; top: 0; z-index: 100;
+        }
+
+        .nav-buttons { display: flex; gap: 8px; }
+        
+        .header-btn {
+            border: none; padding: 6px 10px; border-radius: 8px;
+            font-weight: bold; font-size: 11px; cursor: pointer;
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        .container { padding: 15px; padding-bottom: 80px; }
 
         /* Статистика */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .stat-card { background: var(--card-bg); padding: 15px; border-radius: 14px; border-bottom: 3px solid transparent; }
         .stat-card.red { border-bottom-color: var(--danger); }
         .stat-card.green { border-bottom-color: var(--success); }
+        .stat-card small { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; }
         .stat-card div { font-size: 18px; font-weight: 800; margin-top: 4px; }
 
-        /* График */
-        .chart-container { background: var(--card-bg); border-radius: 16px; padding: 15px; margin-top: 20px; }
-
-        /* Меню */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .cat-card { background: var(--card-bg); border-radius: 16px; padding: 15px; text-align: center; cursor: pointer; }
-        .journal-btn { background: #24242f; color: #fff; padding: 12px; border-radius: 12px; text-align: center; margin: 15px 0; cursor: pointer; }
-
-        /* Бонусы и Квесты */
+        /* Кнопки */
+        .journal-btn { background: #24242f; color: #fff; padding: 14px; border-radius: 12px; text-align: center; margin: 15px 0; cursor: pointer; font-weight: 600; border: 1px solid rgba(255,255,255,0.05); }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .cat-card { background: var(--card-bg); border-radius: 16px; padding: 18px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.02); }
+        
+        /* Квесты */
         .quest-item {
-            background: var(--card-bg); padding: 12px; border-radius: 12px;
+            background: var(--card-bg); padding: 14px; border-radius: 12px;
             margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;
         }
-        .quest-item.done { opacity: 0.5; border-left: 3px solid var(--success); }
+        .quest-item.done { opacity: 0.4; filter: grayscale(1); }
         
         .checkbox-custom {
-            width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--accent);
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--accent);
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
         }
-        .done .checkbox-custom { background: var(--accent); color: #000; }
+        .done .checkbox-custom { background: var(--accent); color: #000; border-color: var(--accent); }
 
+        /* Формы */
         input { width: 100%; background: #000; border: 1px solid #2c2c2e; color: #fff; padding: 12px; border-radius: 10px; margin-bottom: 8px; box-sizing: border-box; }
-        .primary-btn { background: linear-gradient(135deg, #ff9f0a 0%, #ff375f 100%); color: #fff; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 700; }
+        .primary-btn { background: linear-gradient(135deg, #ff9f0a 0%, #ff375f 100%); color: #fff; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; }
         
+        .chart-box { background: var(--card-bg); border-radius: 18px; padding: 15px; margin-top: 20px; }
+
         .hidden { display: none !important; }
         .profit { color: var(--success); }
         .loss { color: var(--danger); }
@@ -66,62 +83,79 @@
 <body>
 
 <header>
-    <div style="font-weight: 900;">LEDGER <span style="color:var(--accent)">PRO</span></div>
-    <button onclick="tg.openLink('https://donatello.to/BOOMBAHA')" style="background:var(--accent); border:none; padding:6px 14px; border-radius:8px; font-weight:bold; font-size:11px;">ДОНАТ</button>
+    <div style="font-weight: 900; font-size: 16px;">LEDGER <span style="color:var(--accent)">PRO</span></div>
+    <div class="nav-buttons">
+        <button onclick="tg.openLink('https://www.youtube.com/@BOOMBAHA')" class="header-btn" style="background: var(--youtube); color: white;">
+            ▶ YouTube
+        </button>
+        <button onclick="tg.openLink('https://donationalerts.com')" class="header-btn" style="background: var(--accent); color: black;">
+            💰 Донат
+        </button>
+    </div>
 </header>
 
 <div class="container">
     <div id="mainScreen">
         <div class="stats-grid">
-            <div class="stat-card red"><small>РАСХОД</small><div id="totalBuy" class="loss">$ 0</div></div>
-            <div class="stat-card green"><small>ПРИБЫЛЬ</small><div id="totalProfit" class="profit">$ 0</div></div>
+            <div class="stat-card red"><small>Затраты</small><div id="totalBuy" class="loss">$ 0</div></div>
+            <div class="stat-card green"><small>Прибыль</small><div id="totalProfit" class="profit">$ 0</div></div>
         </div>
 
-        <div class="journal-btn" onclick="showHistory()">📂 История всех сделок</div>
-        <input type="date" id="dateFilter" onchange="updateUI()">
+        <div class="journal-btn" onclick="showHistory()">📂 Открыть общий журнал сделок</div>
+        
+        <div style="margin-bottom: 15px;">
+            <small style="color:var(--text-secondary); margin-left: 5px;">ФИЛЬТР ПО ДАТЕ</small>
+            <input type="date" id="dateFilter" onchange="updateUI()">
+        </div>
 
         <div class="menu-grid">
-            <div class="cat-card" onclick="openCategory('Предметы')">📦<br>Предметы</div>
-            <div class="cat-card" onclick="openCategory('Машины')">🏎️<br>Машины</div>
-            <div class="cat-card" onclick="openCategory('Аренда')">🔑<br>Аренда</div>
-            <div class="cat-card" onclick="openCategory('Одежда')">👕<br>Одежда</div>
+            <div class="cat-card" onclick="openCategory('Предметы')">📦<br><small>Предметы</small></div>
+            <div class="cat-card" onclick="openCategory('Машины')">🏎️<br><small>Машины</small></div>
+            <div class="cat-card" onclick="openCategory('Аренда')">🔑<br><small>Аренда</small></div>
+            <div class="cat-card" onclick="openCategory('Одежда')">👕<br><small>Одежда</small></div>
         </div>
 
-        <button onclick="openBonus()" style="width:100%; margin-top:10px; padding:15px; border-radius:16px; background:var(--card-bg); color:var(--accent); border: 1px solid var(--accent); font-weight:bold;">💎 БОНУСЫ И ЗАДАНИЯ</button>
+        <button onclick="openBonus()" style="width:100%; margin-top:12px; padding:16px; border-radius:16px; background:var(--card-bg); color:var(--accent); border: 1px solid var(--accent); font-weight:bold; cursor:pointer;">
+            💎 БОНУСЫ И КВЕСТЫ (60+)
+        </button>
 
-        <div class="chart-container">
-            <small style="color:var(--text-secondary)">АНАЛИЗА ПРИБЫЛИ</small>
-            <canvas id="lineChart" style="margin-top:10px;"></canvas>
+        <div class="chart-box">
+            <small style="color:var(--text-secondary); letter-spacing: 1px;">АНАЛИТИКА ПРИБЫЛИ</small>
+            <canvas id="lineChart" style="margin-top:15px;"></canvas>
         </div>
     </div>
 
     <div id="viewList" class="hidden">
-        <button onclick="goBack()" style="background:none; border:none; color:var(--accent); margin-bottom:15px;">← НАЗАД</button>
-        <h2 id="viewTitle">Сделки</h2>
+        <button onclick="goBack()" style="background:none; border:none; color:var(--accent); margin-bottom:15px; font-weight:bold; cursor:pointer;">← НАЗАД В МЕНЮ</button>
+        <h2 id="viewTitle" style="margin:0 0 15px 0;">Сделки</h2>
         <div id="formAdd" class="hidden" style="background:var(--card-bg); padding:15px; border-radius:16px; margin-bottom:15px;">
-            <input type="text" id="inName" placeholder="Название">
+            <input type="text" id="inName" placeholder="Название (напр. BMW M5)">
             <div style="display:flex; gap:8px;">
-                <input type="number" id="inBuy" placeholder="Купил">
-                <input type="number" id="inSell" placeholder="Продал">
+                <input type="number" id="inBuy" placeholder="Цена покупки">
+                <input type="number" id="inSell" placeholder="Цена продажи">
             </div>
-            <button class="primary-btn" onclick="saveDeal()">ДОБАВИТЬ</button>
+            <button class="primary-btn" onclick="saveDeal()">ДОБАВИТЬ ЗАПИСЬ</button>
         </div>
         <div id="itemsList"></div>
     </div>
 
     <div id="viewBonus" class="hidden">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <button onclick="goBack()" style="background:none; border:none; color:var(--accent); font-weight:bold;">← НАЗАД</button>
-            <button onclick="resetQuests()" style="background:var(--danger); border:none; color:white; padding:5px 10px; border-radius:8px; font-size:10px;">СБРОСИТЬ ПРОГРЕСС</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <button onclick="goBack()" style="background:none; border:none; color:var(--accent); font-weight:bold; cursor:pointer;">← НАЗАД</button>
+            <button onclick="resetQuests()" style="background:var(--danger); border:none; color:white; padding:6px 12px; border-radius:8px; font-size:10px; font-weight:bold;">СБРОСИТЬ ВСЁ</button>
         </div>
-        <h2 style="margin:15px 0;">Ежедневные квесты</h2>
+        <h2 style="margin:0 0 10px 0;">Ежедневные задачи</h2>
+        <p style="color:var(--text-secondary); font-size: 12px; margin-bottom: 20px;">Отмечайте выполненные активности в течение дня.</p>
         <div id="questList"></div>
     </div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp;
-const storageKey = 'gta_ledger_v4_' + (tg.initDataUnsafe.user?.id || 'dev');
+tg.ready();
+tg.expand();
+
+const storageKey = 'gta_ledger_final_' + (tg.initDataUnsafe.user?.id || 'local');
 
 let state = JSON.parse(localStorage.getItem(storageKey)) || {
     deals: [],
@@ -140,9 +174,10 @@ let state = JSON.parse(localStorage.getItem(storageKey)) || {
 };
 
 let chart = null;
+let activeCat = '';
 
 function save() { localStorage.setItem(storageKey, JSON.stringify(state)); updateUI(); }
-function fmt(v) { return '$ ' + Math.abs(v).toLocaleString(); }
+function fmt(v) { return '$ ' + Math.abs(v).toLocaleString('ru-RU'); }
 
 // Навигация
 function openCategory(c) { activeCat = c; toggleView('viewList'); document.getElementById('formAdd').classList.remove('hidden'); renderDeals('cat'); }
@@ -157,7 +192,7 @@ function toggleView(id) {
 // Сделки
 function saveDeal() {
     const n = document.getElementById('inName').value, b = Number(document.getElementById('inBuy').value)||0, s = Number(document.getElementById('inSell').value)||0;
-    if(!n) return;
+    if(!n) { alert('Введите название!'); return; }
     state.deals.push({id: Date.now(), cat: activeCat, name: n, buy: b, sell: s, date: new Date().toISOString().split('T')[0]});
     document.getElementById('inName').value = ''; document.getElementById('inBuy').value = ''; document.getElementById('inSell').value = '';
     save(); renderDeals('cat');
@@ -168,10 +203,20 @@ function renderDeals(mode) {
     const list = mode === 'all' ? state.deals : state.deals.filter(d => d.cat === activeCat);
     list.sort((a,b) => b.id - a.id).forEach(d => {
         const p = d.sell - d.buy;
-        cont.innerHTML += `<div class="quest-item"><div><small>${d.cat}</small><br><b>${d.name}</b></div><div style="text-align:right"><div class="${p>=0?'profit':'loss'}">${fmt(p)}</div><small onclick="deleteDeal(${d.id})" style="color:var(--danger)">Удалить</small></div></div>`;
+        cont.innerHTML += `
+            <div class="quest-item">
+                <div style="max-width:60%;">
+                    <small style="color:var(--text-secondary)">${d.date} • ${d.cat}</small><br>
+                    <b style="font-size:14px;">${d.name}</b>
+                </div>
+                <div style="text-align:right">
+                    <div class="${p>=0?'profit':'loss'}" style="font-weight:bold;">${p>=0?'+':''}${fmt(p)}</div>
+                    <small onclick="deleteDeal(${d.id})" style="color:var(--danger); cursor:pointer;">Удалить</small>
+                </div>
+            </div>`;
     });
 }
-function deleteDeal(id) { state.deals = state.deals.filter(d => d.id !== id); save(); renderDeals(activeCat?'cat':'all'); }
+function deleteDeal(id) { if(confirm('Удалить сделку?')) { state.deals = state.deals.filter(d => d.id !== id); save(); renderDeals(activeCat?'cat':'all'); } }
 
 // Квесты
 function renderQuests() {
@@ -179,12 +224,13 @@ function renderQuests() {
     state.quests.forEach((q, i) => {
         const div = document.createElement('div');
         div.className = 'quest-item ' + (q.done ? 'done' : '');
-        div.innerHTML = `<span>${q.name}</span><div class="checkbox-custom" onclick="toggleQuest(${i})">${q.done ? '✓' : ''}</div>`;
+        div.onclick = () => toggleQuest(i);
+        div.innerHTML = `<span>${q.name}</span><div class="checkbox-custom">${q.done ? '✓' : ''}</div>`;
         cont.appendChild(div);
     });
 }
 function toggleQuest(i) { state.quests[i].done = !state.quests[i].done; save(); renderQuests(); }
-function resetQuests() { if(confirm('Сбросить все задания?')) { state.quests.forEach(q => q.done = false); save(); renderQuests(); } }
+function resetQuests() { if(confirm('Сбросить весь прогресс заданий?')) { state.quests.forEach(q => q.done = false); save(); renderQuests(); } }
 
 // UI и График
 function updateUI() {
@@ -206,15 +252,22 @@ function renderChart() {
         type: 'bar',
         data: {
             labels: cats,
-            datasets: [{ label: 'Чистая прибыль', data: data, backgroundColor: ['#ff9f0a', '#30d158', '#ff453a', '#5856d6'], borderRadius: 8 }]
+            datasets: [{ label: 'Чистая прибыль', data: data, backgroundColor: ['#ff9f0a', '#30d158', '#ff453a', '#5856d6'], borderRadius: 6 }]
         },
-        options: { plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#222' }, ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } } }
+        options: { 
+            responsive: true,
+            plugins: { legend: { display: false } }, 
+            scales: { 
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888', font: {size: 10} } }, 
+                x: { ticks: { color: '#888', font: {size: 10} }, grid: { display: false } } 
+            } 
+        }
     });
 }
 
+// Установка даты и запуск
 document.getElementById('dateFilter').value = new Date().toISOString().split('T')[0];
 updateUI();
 </script>
 </body>
 </html>
-
