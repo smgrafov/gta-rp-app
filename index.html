@@ -4,60 +4,91 @@
   <meta charset="UTF-8">
   <title>GTA RP Перекуп</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
     body { margin:0; font-family:Arial; background:#0e0e0e; color:#fff; }
     header { padding:15px; text-align:center; font-size:20px; font-weight:bold; border-bottom:2px solid orange; }
-    .box { margin:15px; padding:15px; background:#1a1a1a; border-radius:10px; }
-    input, select { width:100%; padding:10px; margin-top:8px; background:#000; color:#fff; border:1px solid #333; border-radius:6px; font-size:16px; }
-    button { width:100%; padding:12px; margin-top:12px; background:orange; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer; }
+    .container { padding:15px; }
+    button, select, input { width:100%; padding:10px; margin-top:8px; border-radius:8px; font-size:16px; }
+    button { background:orange; color:#000; border:none; cursor:pointer; font-weight:bold; }
+    button:active { opacity:0.8; }
+    input, select { background:#000; color:#fff; border:1px solid #333; }
+    .box { background:#1a1a1a; border-radius:10px; padding:15px; margin-bottom:15px; }
     table { width:100%; border-collapse:collapse; margin-top:10px; }
     th, td { border:1px solid #333; padding:6px; text-align:center; }
     th { background:#222; }
+    .profit { color:#0f0; font-weight:bold; }
+    .loss { color:red; font-weight:bold; }
+    .tabs { display:flex; gap:5px; margin-bottom:10px; }
+    .tab { flex:1; background:#222; padding:10px; text-align:center; border-radius:6px; cursor:pointer; }
+    .tab.active { background:orange; color:#000; font-weight:bold; }
+    @media(max-width:600px){ input, select, button { font-size:14px; padding:8px; } th, td { font-size:12px; padding:4px; } }
   </style>
 </head>
 
 <body>
 
 <header>GTA RP • Перекуп</header>
+<div class="container">
 
-<div class="box">
-  <h3>Новая сделка</h3>
+  <!-- Табы -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('main')">Главный</div>
+    <div class="tab" onclick="showTab('categories')">Категории</div>
+    <div class="tab" onclick="showTab('bonus')">БонусКоинты</div>
+  </div>
 
-  <label>Категория</label>
-  <select id="category">
-    <option>Предметы</option>
-    <option>Аренда</option>
-    <option>Машины</option>
-    <option>Шмотки</option>
-  </select>
+  <!-- Главный экран -->
+  <div id="main" class="box tabContent">
+    <h3>Общее</h3>
+    <label>Выберите дату</label>
+    <input type="date" id="mainDate">
 
-  <label>Название товара</label>
-  <input type="text" id="itemName" placeholder="Введите название">
+    <p>Общий расход: <span id="totalBuy" class="loss">$0</span></p>
+    <p>Общая прибыль: <span id="totalSell" class="profit">$0</span></p>
+  </div>
 
-  <label>Покупка ($)</label>
-  <input type="number" id="buy" placeholder="Сумма покупки">
+  <!-- Категории -->
+  <div id="categories" class="box tabContent" style="display:none;">
+    <label>Выберите категорию</label>
+    <select id="categorySelect" onchange="renderCategoryTable()">
+      <option>Предметы</option>
+      <option>Аренда</option>
+      <option>Машины</option>
+      <option>Шмотки</option>
+    </select>
 
-  <label>Продажа ($)</label>
-  <input type="number" id="sell" placeholder="Сумма продажи">
+    <h4>Новая сделка</h4>
+    <input type="text" id="itemName" placeholder="Название">
+    <input type="number" id="buy" placeholder="Покупка">
+    <input type="number" id="sell" placeholder="Продажа">
+    <button onclick="addDeal()">Добавить сделку</button>
 
-  <button onclick="addDeal()">Добавить сделку</button>
-</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Название</th><th>Покупка</th><th>Продажа</th><th>Прибыль</th><th>Удалить</th>
+        </tr>
+      </thead>
+      <tbody id="categoryTableBody"></tbody>
+    </table>
+  </div>
 
-<div class="box">
-  <h3>Список сделок</h3>
-  <table id="dealsTable">
-    <thead>
-      <tr>
-        <th>Категория</th>
-        <th>Товар</th>
-        <th>Покупка</th>
-        <th>Продажа</th>
-        <th>Прибыль</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <!-- БонусКоинты -->
+  <div id="bonus" class="box tabContent" style="display:none;">
+    <h4>БонусКоинты</h4>
+    <table>
+      <thead>
+        <tr><th>Наименование</th><th>Описание</th><th>Итог</th></tr>
+      </thead>
+      <tbody id="bonusTableBody">
+        <tr><td>Бонус 1</td><td>Описание 1</td><td>100</td></tr>
+        <tr><td>Бонус 2</td><td>Описание 2</td><td>200</td></tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>
 
 <script>
@@ -67,45 +98,15 @@ tg.expand();
 
 let deals = JSON.parse(localStorage.getItem('deals')) || [];
 
-function renderTable() {
-  const tbody = document.querySelector('#dealsTable tbody');
-  tbody.innerHTML = '';
-  deals.forEach(deal => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${deal.category}</td>
-      <td>${deal.name}</td>
-      <td>${deal.buy}</td>
-      <td>${deal.sell}</td>
-      <td>${deal.sell - deal.buy}</td>
-    `;
-    tbody.appendChild(row);
-  });
+function showTab(tab) {
+  document.querySelectorAll('.tabContent').forEach(el=>el.style.display='none');
+  document.getElementById(tab).style.display='block';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  if(tab==='categories') renderCategoryTable();
 }
 
 function addDeal() {
-  const category = document.getElementById('category').value;
+  const category = document.getElementById('categorySelect').value;
   const name = document.getElementById('itemName').value;
-  const buy = Number(document.getElementById('buy').value) || 0;
-  const sell = Number(document.getElementById('sell').value) || 0;
-
-  if(!name) {
-    alert('Введите название товара!');
-    return;
-  }
-
-  deals.push({category, name, buy, sell});
-  localStorage.setItem('deals', JSON.stringify(deals));
-
-  document.getElementById('itemName').value = '';
-  document.getElementById('buy').value = '';
-  document.getElementById('sell').value = '';
-
-  renderTable();
-}
-
-renderTable();
-</script>
-
-</body>
-</html>
+  const
