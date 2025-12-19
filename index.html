@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>GTA RP | Перекуп</title>
+    <title>GTA RP | Ledger Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     
@@ -23,13 +23,11 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg); 
             color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        /* Шапка */
         header { 
             padding: 20px 15px;
-            text-align: left;
             background: rgba(28, 28, 36, 0.8);
             backdrop-filter: blur(10px);
             position: sticky;
@@ -41,11 +39,10 @@
             align-items: center;
         }
 
-        header h1 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: 1px; color: var(--accent); }
+        header h1 { margin: 0; font-size: 18px; font-weight: 800; color: var(--accent); }
 
-        .container { padding: 15px; padding-bottom: 100px; }
+        .container { padding: 15px; padding-bottom: 50px; }
 
-        /* Карточки статистики */
         .stats-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -58,18 +55,15 @@
             padding: 15px;
             border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.1s;
         }
+        .stat-card:active { transform: scale(0.97); }
 
-        .stat-card small { color: var(--text-secondary); font-size: 12px; display: block; margin-bottom: 5px; }
-        .stat-card div { font-size: 18px; font-weight: bold; }
+        .stat-card small { color: var(--text-secondary); font-size: 11px; text-transform: uppercase; }
+        .stat-card div { font-size: 18px; font-weight: bold; margin-top: 5px; }
 
-        /* Кнопки категорий */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         .btn-cat {
             background: var(--card-bg);
@@ -78,34 +72,31 @@
             padding: 20px;
             color: white;
             text-align: center;
-            transition: 0.2s;
             cursor: pointer;
         }
 
-        .btn-cat:active { transform: scale(0.95); background: rgba(255,255,255,0.05); }
-        .btn-cat i { font-size: 24px; display: block; margin-bottom: 8px; }
-
-        /* Формы ввода */
-        .input-group {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 16px;
-            margin-bottom: 20px;
+        /* Поля ввода */
+        .edit-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
         }
 
-        input, select {
+        input {
             width: 100%;
             background: #000;
             border: 1px solid #333;
             color: white;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
             box-sizing: border-box;
-            font-size: 14px;
         }
 
-        button.primary {
+        .primary-btn {
             background: var(--grad);
             color: white;
             border: none;
@@ -113,43 +104,38 @@
             border-radius: 12px;
             width: 100%;
             font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(255, 55, 95, 0.3);
+            margin-top: 10px;
         }
 
-        /* Список сделок */
-        .deal-item {
+        /* Список элементов */
+        .deal-card {
             background: var(--card-bg);
-            margin-bottom: 10px;
-            padding: 12px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 12px;
+            padding: 15px;
+            border-radius: 16px;
             border-left: 4px solid var(--accent);
         }
 
-        .deal-info h4 { margin: 0; font-size: 15px; }
-        .deal-info small { color: var(--text-secondary); }
+        .deal-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        
+        .deal-meta { font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; }
 
-        .deal-price { text-align: right; }
-        .profit { color: var(--success); font-weight: bold; }
-        .loss { color: var(--danger); font-weight: bold; }
-
-        .btn-back { background: none; border: none; color: var(--accent); font-weight: bold; cursor: pointer; padding: 10px 0; }
-
-        /* Донат */
-        .donate-pill {
-            background: #ffd700;
-            color: #000;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        .price-info { display: flex; gap: 15px; margin: 10px 0; font-size: 14px; }
+        
+        .action-btns { display: flex; gap: 10px; margin-top: 10px; border-top: 1px solid #333; padding-top: 10px; }
+        .action-btns button { 
+            flex: 1; 
+            padding: 8px; 
+            border-radius: 6px; 
+            border: none; 
+            font-size: 12px; 
             font-weight: bold;
-            text-decoration: none;
+            cursor: pointer;
         }
 
         .hidden { display: none; }
+        .profit { color: var(--success); }
+        .loss { color: var(--danger); }
     </style>
 </head>
 
@@ -157,25 +143,24 @@
 
 <header>
     <h1>GTA LEDGER</h1>
-    <a href="#" class="donate-pill" onclick="donate()">💰 DONATE</a>
+    <div style="font-size: 12px; color: var(--text-secondary);" id="currentDateDisplay"></div>
 </header>
 
 <div class="container">
 
     <div id="mainScreen">
         <div class="stats-grid">
-            <div class="stat-card">
-                <small>Затраты</small>
-                <div id="totalBuy" style="color: var(--danger);">$0</div>
+            <div class="stat-card" onclick="showHistory('all')">
+                <small>Все затраты ⮕</small>
+                <div id="totalBuy" class="loss">$0</div>
             </div>
-            <div class="stat-card">
-                <small>Прибыль</small>
-                <div id="totalSell" style="color: var(--success);">$0</div>
+            <div class="stat-card" onclick="showHistory('all')">
+                <small>Чистая прибыль ⮕</small>
+                <div id="totalProfit" class="profit">$0</div>
             </div>
         </div>
 
-        <label style="color: var(--text-secondary); font-size: 12px; margin-left: 5px;">ОТЧЕТ ЗА ПЕРИОД:</label>
-        <input type="date" id="mainFilterDate" onchange="updateTotals()">
+        <input type="date" id="mainFilterDate" onchange="updateTotals()" style="margin-bottom: 20px;">
 
         <div class="menu-grid">
             <div class="btn-cat" onclick="showCategory('Предметы')">📦<br>Предметы</div>
@@ -183,34 +168,27 @@
             <div class="btn-cat" onclick="showCategory('Аренда')">🔑<br>Аренда</div>
             <div class="btn-cat" onclick="showCategory('Одежда')">👕<br>Одежда</div>
         </div>
-
-        <div class="btn-cat" onclick="showBonus()" style="margin-top:12px; width:100%; box-sizing:border-box; border-color: rgba(255,159,10,0.3);">
-            💎 БонусКоинты
-        </div>
+        
+        <button onclick="showBonus()" style="width:100%; margin-top:12px; padding:15px; border-radius:16px; background:var(--card-bg); color:var(--accent); border:1px solid var(--accent);">💎 Мои БонусКоинты</button>
     </div>
 
-    <div id="categoryBox" class="hidden">
-        <button class="btn-back" onclick="backToMain()">← НАЗАД К МЕНЮ</button>
-        <h2 id="categoryTitle" style="margin-top: 10px; color: var(--accent);">Категория</h2>
-
-        <div class="input-group">
-            <input type="text" id="itemName" placeholder="Название (например: BMW M5)">
-            <div style="display:flex; gap:10px;">
-                <input type="number" id="buy" placeholder="Купил за">
-                <input type="number" id="sell" placeholder="Продал за">
-            </div>
-            <button class="primary" onclick="addDeal()">СОХРАНИТЬ СДЕЛКУ</button>
+    <div id="listView" class="hidden">
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <button onclick="backToMain()" style="background:none; border:none; color:var(--accent); font-weight:bold; padding:10px 0;">← НАЗАД</button>
+            <h3 id="viewTitle" style="margin:0; font-size:16px;">Сделки</h3>
         </div>
 
-        <div id="dealsList">
+        <div id="addForm" class="hidden" style="background:var(--card-bg); padding:15px; border-radius:16px; margin: 15px 0;">
+            <input type="text" id="itemName" placeholder="Название">
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <input type="number" id="buyPrice" placeholder="Покупка">
+                <input type="number" id="sellPrice" placeholder="Продажа">
             </div>
-    </div>
+            <button class="primary-btn" onclick="addDeal()">+ ДОБАВИТЬ</button>
+        </div>
 
-    <div id="bonusBox" class="hidden">
-        <button class="btn-back" onclick="backToMain()">← НАЗАД К МЕНЮ</button>
-        <h2 style="color: var(--accent);">Бонусные баллы</h2>
-        <div id="bonusList"></div>
-        <button class="primary" onclick="addBonusRow()" style="margin-top: 15px;">+ ДОБАВИТЬ СТРОКУ</button>
+        <div id="itemsContainer" style="margin-top:20px;">
+            </div>
     </div>
 
 </div>
@@ -219,140 +197,161 @@
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
-tg.headerColor = '#1c1c24';
 
-const userId = tg.initDataUnsafe.user?.id || "local_dev";
+const userId = tg.initDataUnsafe.user?.id || "dev_user";
 let deals = JSON.parse(localStorage.getItem('deals_'+userId)) || [];
-let bonusCoins = JSON.parse(localStorage.getItem('bonus_'+userId)) || [{name:'BC баллы', total:0}];
-let currentCategory = '';
+let currentMode = ''; // 'category' или 'all'
+let activeCategory = '';
 
 function formatMoney(num) {
-    return '$ ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return '$ ' + Math.abs(num).toLocaleString('ru-RU');
 }
 
+// Показать историю всех сделок (при клике на стат-карточки)
+function showHistory(mode) {
+    currentMode = 'all';
+    activeCategory = '';
+    document.getElementById('mainScreen').classList.add('hidden');
+    document.getElementById('listView').classList.remove('hidden');
+    document.getElementById('addForm').classList.add('hidden');
+    document.getElementById('viewTitle').textContent = 'Журнал всех сделок';
+    renderList();
+}
+
+// Показать конкретную категорию
 function showCategory(cat) {
-    currentCategory = cat;
+    currentMode = 'category';
+    activeCategory = cat;
     document.getElementById('mainScreen').classList.add('hidden');
-    document.getElementById('categoryBox').classList.remove('hidden');
-    document.getElementById('categoryTitle').textContent = cat;
-    renderDeals();
-}
-
-function showBonus() {
-    document.getElementById('mainScreen').classList.add('hidden');
-    document.getElementById('bonusBox').classList.remove('hidden');
-    renderBonus();
+    document.getElementById('listView').classList.remove('hidden');
+    document.getElementById('addForm').classList.remove('hidden');
+    document.getElementById('viewTitle').textContent = cat;
+    renderList();
 }
 
 function backToMain() {
-    document.getElementById('categoryBox').classList.add('hidden');
-    document.getElementById('bonusBox').classList.add('hidden');
+    document.getElementById('listView').classList.add('hidden');
     document.getElementById('mainScreen').classList.remove('hidden');
     updateTotals();
 }
 
 function addDeal() {
     const name = document.getElementById('itemName').value;
-    const buy = Number(document.getElementById('buy').value) || 0;
-    const sell = Number(document.getElementById('sell').value) || 0;
-    const date = new Date().toISOString().split('T')[0];
-
-    if(!name) { tg.showAlert('Введите название!'); return; }
-
-    deals.push({id: Date.now(), category: currentCategory, name, buy, sell, date});
-    save();
+    const buy = Number(document.getElementById('buyPrice').value) || 0;
+    const sell = Number(document.getElementById('sellPrice').value) || 0;
     
+    if(!name) return;
+
+    const newDeal = {
+        id: Date.now(),
+        category: activeCategory,
+        name: name,
+        buy: buy,
+        sell: sell,
+        date: new Date().toISOString().split('T')[0]
+    };
+
+    deals.push(newDeal);
+    save();
     document.getElementById('itemName').value = '';
-    document.getElementById('buy').value = '';
-    document.getElementById('sell').value = '';
-    renderDeals();
+    document.getElementById('buyPrice').value = '';
+    document.getElementById('sellPrice').value = '';
+    renderList();
 }
 
-function renderDeals() {
-    const list = document.getElementById('dealsList');
-    list.innerHTML = '';
-    
-    const filtered = deals
-        .filter(d => d.category === currentCategory)
-        .sort((a,b) => b.id - a.id);
+function renderList() {
+    const container = document.getElementById('itemsContainer');
+    container.innerHTML = '';
 
-    filtered.forEach(d => {
+    let displayDeals = currentMode === 'all' 
+        ? deals 
+        : deals.filter(d => d.category === activeCategory);
+
+    // Сортировка: сначала новые
+    displayDeals.sort((a,b) => b.id - a.id);
+
+    displayDeals.forEach(d => {
         const profit = d.sell - d.buy;
-        const div = document.createElement('div');
-        div.className = 'deal-item';
-        div.innerHTML = `
-            <div class="deal-info">
-                <h4>${d.name}</h4>
-                <small>${d.date} • Куплено: ${formatMoney(d.buy)}</small>
+        const card = document.createElement('div');
+        card.className = 'deal-card';
+        card.innerHTML = `
+            <div id="view-${d.id}">
+                <div class="deal-meta">${d.date} • ${d.category}</div>
+                <div class="deal-header">
+                    <strong style="font-size:16px;">${d.name}</strong>
+                    <span class="${profit >= 0 ? 'profit' : 'loss'}" style="font-weight:bold;">
+                        ${profit >= 0 ? '↑' : '↓'} ${formatMoney(profit)}
+                    </span>
+                </div>
+                <div class="price-info">
+                    <span>Покупка: <span style="color:#888;">${formatMoney(d.buy)}</span></span>
+                    <span>Продажа: <span style="color:#888;">${formatMoney(d.sell)}</span></span>
+                </div>
+                <div class="action-btns">
+                    <button onclick="editMode(${d.id})" style="background:#333; color:white;">⚙️ Редактировать</button>
+                    <button onclick="deleteDeal(${d.id})" style="background:rgba(255,69,58,0.2); color:var(--danger);">🗑️ Удалить</button>
+                </div>
             </div>
-            <div class="deal-price">
-                <div class="${profit >= 0 ? 'profit' : 'loss'}">${profit >= 0 ? '+' : ''}${formatMoney(profit)}</div>
-                <small onclick="deleteDeal(${d.id})" style="color:var(--danger); cursor:pointer;">Удалить</small>
+            <div id="edit-${d.id}" class="hidden">
+                <div class="edit-row">
+                    <input type="text" id="edit-name-${d.id}" value="${d.name}">
+                    <input type="number" id="edit-buy-${d.id}" value="${d.buy}">
+                    <input type="number" id="edit-sell-${d.id}" value="${d.sell}">
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="saveEdit(${d.id})" style="flex:2; background:var(--success); color:black; padding:10px; border-radius:8px; border:none; font-weight:bold;">✅ Сохранить</button>
+                        <button onclick="renderList()" style="flex:1; background:#444; color:white; padding:10px; border-radius:8px; border:none;">Отмена</button>
+                    </div>
+                </div>
             </div>
         `;
-        list.appendChild(div);
+        container.appendChild(card);
     });
 }
 
-function renderBonus() {
-    const list = document.getElementById('bonusList');
-    list.innerHTML = '';
-    bonusCoins.forEach((b, i) => {
-        const div = document.createElement('div');
-        div.className = 'input-group';
-        div.style.marginBottom = '10px';
-        div.innerHTML = `
-            <input type="text" value="${b.name}" onchange="updateBonus(${i}, 'name', this.value)" placeholder="Название">
-            <input type="number" value="${b.total}" onchange="updateBonus(${i}, 'total', this.value)" placeholder="Количество">
-            <button onclick="deleteBonus(${i})" style="background:none; color:var(--danger); border:none; width:100%; font-size:12px;">Удалить параметр</button>
-        `;
-        list.appendChild(div);
-    });
+function editMode(id) {
+    document.getElementById(`view-${id}`).classList.add('hidden');
+    document.getElementById(`edit-${id}`).classList.remove('hidden');
 }
 
-function updateBonus(idx, field, val) {
-    bonusCoins[idx][field] = field === 'total' ? Number(val) : val;
-    save();
-}
-
-function addBonusRow() {
-    bonusCoins.push({name: '', total: 0});
-    renderBonus();
+function saveEdit(id) {
+    const index = deals.findIndex(d => d.id === id);
+    if(index !== -1) {
+        deals[index].name = document.getElementById(`edit-name-${id}`).value;
+        deals[index].buy = Number(document.getElementById(`edit-buy-${id}`).value);
+        deals[index].sell = Number(document.getElementById(`edit-sell-${id}`).value);
+        save();
+        renderList();
+    }
 }
 
 function deleteDeal(id) {
-    deals = deals.filter(d => d.id !== id);
-    save();
-    renderDeals();
-}
-
-function deleteBonus(idx) {
-    bonusCoins.splice(idx, 1);
-    save();
-    renderBonus();
+    if(confirm('Удалить эту сделку?')) {
+        deals = deals.filter(d => d.id !== id);
+        save();
+        renderList();
+    }
 }
 
 function updateTotals() {
     const filterDate = document.getElementById('mainFilterDate').value;
     const filtered = filterDate ? deals.filter(d => d.date === filterDate) : deals;
     
-    const buy = filtered.reduce((a, b) => a + b.buy, 0);
-    const sell = filtered.reduce((a, b) => a + (b.sell - b.buy), 0);
+    const totalBuy = filtered.reduce((a, b) => a + b.buy, 0);
+    const totalProfit = filtered.reduce((a, b) => a + (b.sell - b.buy), 0);
     
-    document.getElementById('totalBuy').textContent = formatMoney(buy);
-    document.getElementById('totalSell').textContent = (sell >= 0 ? '+' : '') + formatMoney(sell);
+    document.getElementById('totalBuy').textContent = formatMoney(totalBuy);
+    document.getElementById('totalProfit').textContent = (totalProfit >= 0 ? '+' : '') + formatMoney(totalProfit);
 }
 
 function save() {
     localStorage.setItem('deals_'+userId, JSON.stringify(deals));
-    localStorage.setItem('bonus_'+userId, JSON.stringify(bonusCoins));
 }
 
-function donate() {
-    tg.openLink('https://donationalerts.com'); // Замените на вашу ссылку
-}
+// Установка текущей даты в фильтр и заголовок
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('mainFilterDate').value = today;
+document.getElementById('currentDateDisplay').textContent = today;
 
-// Инициализация
 updateTotals();
 </script>
 
