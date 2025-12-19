@@ -58,4 +58,98 @@ th { background:#222; }
 </div>
 
 <!-- Раздел бонускоинты -->
-<div i
+<div id="bonusBox" class="box">
+  <h3>БонусКоинты</h3>
+  <table>
+    <thead>
+      <tr><th>Наименование</th><th>Описание</th><th>Итог</th></tr>
+    </thead>
+    <tbody id="bonusTableBody">
+      <tr><td>Бонус 1</td><td>Описание 1</td><td>100</td></tr>
+      <tr><td>Бонус 2</td><td>Описание 2</td><td>200</td></tr>
+    </tbody>
+  </table>
+  <button onclick="backToMain()">⬅ Назад</button>
+</div>
+
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+
+let deals = JSON.parse(localStorage.getItem('deals')) || [];
+let currentCategory = '';
+
+function showCategory(category){
+  currentCategory = category;
+  document.getElementById('mainScreen').style.display='none';
+  document.getElementById('bonusBox').style.display='none';
+  document.getElementById('categoryBox').style.display='block';
+  document.getElementById('categoryTitle').textContent=category;
+  renderCategoryTable();
+}
+
+function showBonus(){
+  document.getElementById('mainScreen').style.display='none';
+  document.getElementById('categoryBox').style.display='none';
+  document.getElementById('bonusBox').style.display='block';
+}
+
+function backToMain(){
+  document.getElementById('mainScreen').style.display='block';
+  document.getElementById('categoryBox').style.display='none';
+  document.getElementById('bonusBox').style.display='none';
+  updateTotals();
+}
+
+function addDeal(){
+  const name = document.getElementById('itemName').value;
+  const buy = Number(document.getElementById('buy').value)||0;
+  const sell = Number(document.getElementById('sell').value)||0;
+  if(!name){ alert('Введите название'); return; }
+
+  deals.push({category:currentCategory, name, buy, sell});
+  localStorage.setItem('deals', JSON.stringify(deals));
+
+  document.getElementById('itemName').value='';
+  document.getElementById('buy').value='';
+  document.getElementById('sell').value='';
+  renderCategoryTable();
+  updateTotals();
+}
+
+function deleteDeal(index){
+  deals.splice(index,1);
+  localStorage.setItem('deals', JSON.stringify(deals));
+  renderCategoryTable();
+  updateTotals();
+}
+
+function renderCategoryTable(){
+  const tbody = document.getElementById('categoryTableBody');
+  tbody.innerHTML='';
+  deals.forEach((d,i)=>{
+    if(d.category===currentCategory){
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${d.name}</td><td>${d.buy}</td><td>${d.sell}</td><td>${d.sell-d.buy}</td>
+      <td><button onclick="deleteDeal(${i})">❌</button></td>`;
+      tbody.appendChild(tr);
+    }
+  });
+}
+
+function updateTotals(){
+  const totalBuy = deals.reduce((a,d)=>a+d.buy,0);
+  const totalSell = deals.reduce((a,d)=>a+d.sell,0);
+  document.getElementById('totalBuy').textContent='$'+totalBuy;
+  document.getElementById('totalSell').textContent='$'+totalSell;
+}
+
+// Инициализация главного экрана
+updateTotals();
+</script>
+
+</body>
+</html>
