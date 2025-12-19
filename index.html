@@ -21,6 +21,8 @@ th { background:#222; }
 .loss { color:red; font-weight:bold; font-size:18px; }
 @media(max-width:600px){ input, button { font-size:14px; padding:8px; } th, td { font-size:12px; padding:4px; } }
 .donate-btn { position:absolute; top:15px; right:15px; background:#ff0; color:#000; padding:8px 12px; border-radius:6px; font-weight:bold; cursor:pointer; }
+.edit-btn { background:#00f; color:#fff; padding:4px 8px; font-size:12px; }
+.save-btn { background:#0f0; color:#000; padding:4px 8px; font-size:12px; }
 </style>
 </head>
 
@@ -35,6 +37,9 @@ th { background:#222; }
 <!-- Главный экран -->
 <div id="mainScreen" class="box" style="display:block;">
   <h3>Главное меню</h3>
+
+  <label>Выберите дату</label>
+  <input type="date" id="mainFilterDate" onchange="updateTotals()">
 
   <button onclick="showCategory('Предметы')">Предметы</button>
   <button onclick="showCategory('Аренда')">Аренда</button>
@@ -67,7 +72,7 @@ th { background:#222; }
 
   <table>
     <thead>
-      <tr><th>Название</th><th>Покупка</th><th>Продажа</th><th>Прибыль</th><th>Удалить</th></tr>
+      <tr><th>Название</th><th>Покупка</th><th>Продажа</th><th>Прибыль</th><th>Дата</th><th>Удалить</th></tr>
     </thead>
     <tbody id="categoryTableBody"></tbody>
   </table>
@@ -79,12 +84,9 @@ th { background:#222; }
   <h3>БонусКоинты</h3>
   <table>
     <thead>
-      <tr><th>Наименование</th><th>Описание</th><th>Итог</th></tr>
+      <tr><th>Наименование</th><th>Описание</th><th>Итог</th><th>Действие</th></tr>
     </thead>
-    <tbody id="bonusTableBody">
-      <tr><td>Бонус 1</td><td>Описание 1</td><td>100</td></tr>
-      <tr><td>Бонус 2</td><td>Описание 2</td><td>200</td></tr>
-    </tbody>
+    <tbody id="bonusTableBody"></tbody>
   </table>
   <button onclick="backToMain()">⬅ Назад</button>
 </div>
@@ -96,12 +98,19 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// Уникальные данные для каждого пользователя
+// Данные для каждого пользователя
 const userId = tg.initDataUnsafe.user.id;
 let deals = JSON.parse(localStorage.getItem('deals_'+userId)) || [];
+let bonusCoins = JSON.parse(localStorage.getItem('bonus_'+userId)) || [
+  {name:'Бонус 1', desc:'Описание 1', total:100},
+  {name:'Бонус 2', desc:'Описание 2', total:200}
+];
 let currentCategory = '';
 
-// Показ раздела категории
+// Главная дата фильтр
+const mainFilter = document.getElementById('mainFilterDate');
+
+// Показ категории
 function showCategory(category){
   currentCategory = category;
   document.getElementById('mainScreen').style.display='none';
@@ -112,14 +121,15 @@ function showCategory(category){
   renderCategoryTable();
 }
 
-// Показ бонускоинтов
+// Показ бонусов
 function showBonus(){
   document.getElementById('mainScreen').style.display='none';
   document.getElementById('categoryBox').style.display='none';
   document.getElementById('bonusBox').style.display='block';
+  renderBonusTable();
 }
 
-// Назад на главный экран
+// Назад
 function backToMain(){
   document.getElementById('mainScreen').style.display='block';
   document.getElementById('categoryBox').style.display='none';
@@ -153,19 +163,22 @@ function deleteDeal(index){
   updateTotals();
 }
 
-// Отрисовка таблицы категории с фильтром по дате
+// Отрисовка категории
 function renderCategoryTable(){
   const tbody = document.getElementById('categoryTableBody');
   tbody.innerHTML='';
   const filterDate = document.getElementById('categoryFilterDate').value;
   let totalBuy=0, totalSell=0;
 
+  // сортировка по дате
+  deals.sort((a,b)=>new Date(b.date)-new Date(a.date));
+
   deals.forEach((d,i)=>{
     if(d.category===currentCategory && (!filterDate || d.date===filterDate)){
       totalBuy += d.buy;
       totalSell += d.sell;
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${d.name}</td><td>${d.buy}</td><td>${d.sell}</td><td>${d.sell-d.buy}</td>
+      tr.innerHTML=`<td>${d.name}</td><td>${d.buy}</td><td>${d.sell}</td><td>${d.sell-d.buy}</td><td>${d.date}</td>
       <td><button onclick="deleteDeal(${i})">❌</button></td>`;
       tbody.appendChild(tr);
     }
@@ -174,20 +187,47 @@ function renderCategoryTable(){
   document.getElementById('categorySell').textContent='$'+totalSell;
 }
 
-// Обновление общего баланса на главной
+// Отрисовка бонусов с возможностью редактировать
+function renderBonusTable(){
+  const tbody = document.getElementById('bonusTableBody');
+  tbody.innerHTML='';
+  bonusCoins.forEach((b,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${b.name}" onchange="bonusCoins[${i}].name=this.value; saveBonus()"></td>
+      <td><input type="text" value="${b.desc}" onchange="bonusCoins[${i}].desc=this.value; saveBonus()"></td>
+      <td><input type="number" value="${b.total}" onchange="bonusCoins[${i}].total=Number(this.value); saveBonus()"></td>
+      <td><button onclick="deleteBonus(${i})">❌</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function saveBonus(){
+  localStorage.setItem('bonus_'+userId, JSON.stringify(bonusCoins));
+}
+
+function deleteBonus(index){
+  bonusCoins.splice(index,1);
+  saveBonus();
+  renderBonusTable();
+}
+
+// Главный экран с фильтром даты
 function updateTotals(){
-  const totalBuy = deals.reduce((a,d)=>a+d.buy,0);
-  const totalSell = deals.reduce((a,d)=>a+d.sell,0);
+  const date = mainFilter.value;
+  const filtered = date ? deals.filter(d=>d.date===date) : deals;
+  const totalBuy = filtered.reduce((a,d)=>a+d.buy,0);
+  const totalSell = filtered.reduce((a,d)=>a+d.sell,0);
   document.getElementById('totalBuy').textContent='$'+totalBuy;
   document.getElementById('totalSell').textContent='$'+totalSell;
 }
 
-// Донатная кнопка
+// Донат
 function donate(){
   window.open('https://your-donation-link.com','_blank');
 }
 
-// Инициализация главного экрана
+// Инициализация
 updateTotals();
 </script>
 
